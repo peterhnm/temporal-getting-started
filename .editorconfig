@@ -18,7 +18,6 @@ ij_any_spaces_within_if_parentheses = true
 ij_any_spaces_within_for_parentheses = true
 ij_any_spaces_within_while_parentheses = true
 ij_any_spaces_within_switch_parentheses = true
-ij_any_spaces_within_try_parentheses = true
 ij_any_spaces_within_catch_parentheses = true
 # braces
 ij_any_class_brace_style = next_line
