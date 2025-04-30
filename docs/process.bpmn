@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1d2hcmz" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:collaboration id="Collaboration_1epui16">
+    <bpmn:participant id="Participant_047kcy1" name="Workflow" processRef="Process_0gjrx3e" />
+    <bpmn:participant id="Participant_07yulhy" name="UI" />
+    <bpmn:messageFlow id="Flow_0fhol5n" sourceRef="Participant_07yulhy" targetRef="StartEvent_1" />
+    <bpmn:messageFlow id="Flow_0m2tvg3" sourceRef="Event_1hf5b1p" targetRef="Participant_07yulhy" />
+    <bpmn:textAnnotation id="TextAnnotation_1no0lii">
+      <bpmn:text>{
+  "userId": string
+  "recepiantId": string
+}</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0h0gxnq" associationDirection="None" sourceRef="Flow_0fhol5n" targetRef="TextAnnotation_1no0lii" />
+    <bpmn:textAnnotation id="TextAnnotation_0a2bfr6">
+      <bpmn:text>{
+  "success": bool
+}</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0fv3c9v" associationDirection="None" sourceRef="Flow_0m2tvg3" targetRef="TextAnnotation_0a2bfr6" />
+  </bpmn:collaboration>
+  <bpmn:process id="Process_0gjrx3e" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_16w2h4i</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_16w2h4i" sourceRef="StartEvent_1" targetRef="Activity_0ojvhlt" />
+    <bpmn:serviceTask id="Activity_0ojvhlt" name="Verify id&#39;s">
+      <bpmn:incoming>Flow_16w2h4i</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f8bti2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1f8bti2" sourceRef="Activity_0ojvhlt" targetRef="Activity_167enp7" />
+    <bpmn:serviceTask id="Activity_167enp7" name="Withdraw money">
+      <bpmn:incoming>Flow_1f8bti2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dx2zeh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0dx2zeh" sourceRef="Activity_167enp7" targetRef="Activity_1l7tmex" />
+    <bpmn:serviceTask id="Activity_1l7tmex" name="Deposit money">
+      <bpmn:incoming>Flow_0dx2zeh</bpmn:incoming>
+      <bpmn:outgoing>Flow_1sxkcrb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1hf5b1p">
+      <bpmn:incoming>Flow_1sxkcrb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1sxkcrb" sourceRef="Activity_1l7tmex" targetRef="Event_1hf5b1p" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1epui16">
+      <bpmndi:BPMNShape id="Participant_047kcy1_di" bpmnElement="Participant_047kcy1" isHorizontal="true">
+        <dc:Bounds x="180" y="238" width="710" height="250" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="252" y="342" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0je5h16_di" bpmnElement="Activity_0ojvhlt">
+        <dc:Bounds x="340" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14ca3re_di" bpmnElement="Activity_167enp7">
+        <dc:Bounds x="500" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bjw9pr_di" bpmnElement="Activity_1l7tmex">
+        <dc:Bounds x="660" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hf5b1p_di" bpmnElement="Event_1hf5b1p">
+        <dc:Bounds x="822" y="342" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_16w2h4i_di" bpmnElement="Flow_16w2h4i">
+        <di:waypoint x="288" y="360" />
+        <di:waypoint x="340" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f8bti2_di" bpmnElement="Flow_1f8bti2">
+        <di:waypoint x="440" y="360" />
+        <di:waypoint x="500" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dx2zeh_di" bpmnElement="Flow_0dx2zeh">
+        <di:waypoint x="600" y="360" />
+        <di:waypoint x="660" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sxkcrb_di" bpmnElement="Flow_1sxkcrb">
+        <di:waypoint x="760" y="360" />
+        <di:waypoint x="822" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_1m7afpl_di" bpmnElement="Participant_07yulhy" isHorizontal="true">
+        <dc:Bounds x="385" y="40" width="300" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0fv3c9v_di" bpmnElement="Association_0fv3c9v">
+        <di:waypoint x="710" y="200" />
+        <di:waypoint x="810" y="143" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0h0gxnq_di" bpmnElement="Association_0h0gxnq">
+        <di:waypoint x="400" y="200" />
+        <di:waypoint x="330" y="124" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fhol5n_di" bpmnElement="Flow_0fhol5n">
+        <di:waypoint x="500" y="100" />
+        <di:waypoint x="500" y="200" />
+        <di:waypoint x="270" y="200" />
+        <di:waypoint x="270" y="342" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m2tvg3_di" bpmnElement="Flow_0m2tvg3">
+        <di:waypoint x="840" y="342" />
+        <di:waypoint x="840" y="200" />
+        <di:waypoint x="570" y="200" />
+        <di:waypoint x="570" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0a2bfr6_di" bpmnElement="TextAnnotation_0a2bfr6">
+        <dc:Bounds x="810" y="100" width="110" height="60" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1no0lii_di" bpmnElement="TextAnnotation_1no0lii">
+        <dc:Bounds x="180" y="87" width="145" height="73" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
