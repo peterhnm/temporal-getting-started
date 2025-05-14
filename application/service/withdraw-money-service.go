@@ -20,24 +20,24 @@ func (e *InsufficientFundsError) Error() string {
 	return "Insufficient funds"
 }
 
-func (s *WithdrawMoneyService) Withdraw(id string, amount float64) (domain.BankAccount, error) {
-	account, err := s.bankRepo.Account(id)
+func (s *WithdrawMoneyService) Withdraw(cmd in.WithdrawMoneyCommand) (*domain.BankAccount, error) {
+	account, err := s.bankRepo.Account(cmd.AccountId)
 	if err != nil {
-		return domain.BankAccount{}, err
+		return &domain.BankAccount{}, err
 	}
 
-	balance := account.Balance - amount
+	balance := account.Balance - cmd.Amount
 
 	if balance < 0 {
-		return domain.BankAccount{}, &InsufficientFundsError{}
+		return &domain.BankAccount{}, &InsufficientFundsError{}
 	}
 
 	account.Balance = balance
 
-	account, err = s.bankRepo.Update(id, account)
+	account, err = s.bankRepo.Update(cmd.AccountId, account)
 	if err != nil {
-		return domain.BankAccount{}, err
+		return &domain.BankAccount{}, err
 	}
 
-	return account, nil
+	return &account, nil
 }

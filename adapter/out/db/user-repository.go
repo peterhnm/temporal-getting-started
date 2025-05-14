@@ -29,6 +29,7 @@ func (e *InvalidUserError) Error() string {
 }
 
 func (repo *UserRepository) FindById(id string) (domain.User, error) {
+	log.Printf("[USER-REPO] %v", id)
 	if user, exists := repo.users[id]; exists {
 		log.Printf("Found user with id %s", id)
 		return user, nil

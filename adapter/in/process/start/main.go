@@ -21,7 +21,7 @@ func Start(moneyTransferWorkflow *process.MoneyTransferWorkflow) {
 	input := shared.PaymentDetails{
 		UserId:      "1234",
 		RecipientId: "5678",
-		Amount:      100,
+		Amount:      100.00,
 	}
 
 	options := client.StartWorkflowOptions{

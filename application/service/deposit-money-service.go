@@ -14,18 +14,18 @@ func NewDepositMoneyService(bankRepo out.BankRepository) in.DepositMoneyUseCase 
 	return &DepositMoneyService{bankRepo}
 }
 
-func (s *DepositMoneyService) Deposit(id string, amount float64) (domain.BankAccount, error) {
-	account, err := s.bankRepo.Account(id)
+func (s *DepositMoneyService) Deposit(cmd in.DepositMoneyCommand) (*domain.BankAccount, error) {
+	account, err := s.bankRepo.Account(cmd.AccountId)
 	if err != nil {
-		return domain.BankAccount{}, err
+		return &domain.BankAccount{}, err
 	}
 
-	account.Balance += amount
+	account.Balance += cmd.Amount
 
-	account, err = s.bankRepo.Update(id, account)
+	account, err = s.bankRepo.Update(cmd.AccountId, account)
 	if err != nil {
-		return domain.BankAccount{}, err
+		return &domain.BankAccount{}, err
 	}
 
-	return account, nil
+	return &account, nil
 }
