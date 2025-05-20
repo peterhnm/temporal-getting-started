@@ -14,9 +14,12 @@ var (
 	RepositorySet = wire.NewSet(
 		db.NewUserRepository,
 		db.NewBankRepository,
+		db.NewUserTaskRepository,
 	)
 	ServiceSet = wire.NewSet(
 		service.NewVerificationService,
+		service.NewNotifyUserService,
+		service.NewUserTaskService,
 		service.NewWithdrawMoneyService,
 		service.NewDepositMoneyService,
 	)
