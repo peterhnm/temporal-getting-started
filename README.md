@@ -57,6 +57,10 @@ The following BPMN concepts are currently in focus:
    -H "Content-Type: application/json" \
    -d '{"workflowId": "pay-invoice-701", "runId": "YOUR_RUN_ID", "decision": false}'
    ```
+   
+## Documentation
+Die Dokumentation soll dazu dienen die Unterschiede zwischen Temporal und BPMN zu beleuchten.
+
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
