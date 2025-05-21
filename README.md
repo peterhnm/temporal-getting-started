@@ -59,7 +59,8 @@ The following BPMN concepts are currently in focus:
    ```
    
 ## Documentation
-Die Dokumentation soll dazu dienen die Unterschiede zwischen Temporal und BPMN zu beleuchten.
+
+Ongoing notes and findings from my exploration of Temporal are available [here](https://peterhnm.github.io/temporal-getting-started/about.html).
 
 
 <!-- MARKDOWN LINKS & IMAGES -->
