@@ -21,17 +21,17 @@
 
 ## About The Project
 
-Mit diesem Projekt möchte ich nach und nach Temporal besser 
-kennenlernen.
-Gleichzeitig sind es meine ersten Schritte mit der 
-Programmiersprache `Go`.
-Die Idee ist es bekannte Konzepte aus BPMN mithilfe von 
-Temporal umzusetzen.
-Folgende Konzepte sollen intensiver beleuchtet werden:  
-- [x] Service Task  
-- [x] User Task  
-- [ ] Message Correlation  
-- [ ] ...  
+This project is a first exploration of Temporal – a microservice orchestration platform 
+designed for running reliable, scalable, and long-lived distributed applications – from 
+the perspective of someone familiar with BPMN.
+At the same time, it marks my first experience with the `Go` programming language.  
+The goal is to model and implement familiar BPMN concepts using Temporal, exploring how 
+common workflow and process patterns can be represented within the Temporal framework.  
+The following BPMN concepts are currently in focus:
+- [x] Service Task
+- [x] User Task
+- [ ] Message Correlation
+- [ ] More to come...
 
 ## Getting started
 1. Start a temporal server
