@@ -15,10 +15,10 @@ func NewWorker(workflow *MoneyTransferWorkflow) *Worker {
 	return &Worker{workflow}
 }
 
-func (w *Worker) Start() {
+func (w *Worker) Run() error {
 	c, err := client.Dial(client.Options{})
 	if err != nil {
-		log.Fatalln("[WORKER] unable to create client", err)
+		return err
 	}
 	defer c.Close()
 
@@ -31,8 +31,11 @@ func (w *Worker) Start() {
 	wf.RegisterActivity(w.workflow.WithdrawMoneyUseCase.Withdraw)
 	wf.RegisterActivity(w.workflow.DepositMoneyUseCase.Deposit)
 
+	log.Println("Starting worker")
 	err = wf.Run(worker.InterruptCh())
 	if err != nil {
-		log.Fatalln("[WORKER] unable to start worker", err)
+		return err
 	}
+
+	return nil
 }

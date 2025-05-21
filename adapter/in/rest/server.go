@@ -10,7 +10,6 @@ func NewServerHTTP(
 	userTaskHandler *UserTaskHandler,
 	processStartHandler *ProcessStartHandler,
 ) *ServerHTTP {
-
 	engine := gin.New()
 
 	// Use logger from Gin
@@ -18,7 +17,7 @@ func NewServerHTTP(
 
 	api := engine.Group("/api")
 
-	api.POST("start", processStartHandler.Start)
+	api.POST("start/:id", processStartHandler.Start)
 
 	api.GET("data", userTaskHandler.GetData)
 	api.POST("complete", userTaskHandler.Complete)
@@ -26,6 +25,10 @@ func NewServerHTTP(
 	return &ServerHTTP{engine: engine}
 }
 
-func (sh *ServerHTTP) Start() {
-	sh.engine.Run(":3000")
+func (sh *ServerHTTP) Run() error {
+	err := sh.engine.Run(":3000")
+	if err != nil {
+		return err
+	}
+	return nil
 }

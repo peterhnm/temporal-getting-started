@@ -6,15 +6,20 @@ import (
 )
 
 func main() {
-	worker, err := di.InitializeTemporal()
+	app, err := di.InitializeApplication()
 	if err != nil {
 		log.Fatalln("cannot start worker", err)
 	}
-	worker.Start()
 
-	server, err := di.InitializeApi()
-	if err != nil {
+	// Run worker non-blocking
+	go func() {
+		if err := app.Worker.Run(); err != nil {
+			log.Fatalln("cannot start worker", err)
+		}
+	}()
+
+	// Run server blocking
+	if err = app.Server.Run(); err != nil {
 		log.Fatalln("cannot start server", err)
 	}
-	server.Start()
 }

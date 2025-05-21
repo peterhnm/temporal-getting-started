@@ -5,11 +5,12 @@ package di
 
 import (
 	"github.com/google/wire"
+	"temporal-getting-started/internal"
+
 	"temporal-getting-started/adapter/in/process"
+	"temporal-getting-started/adapter/in/rest"
 	"temporal-getting-started/adapter/out/db"
 	"temporal-getting-started/application/service"
-
-	"temporal-getting-started/adapter/in/rest"
 )
 
 var (
@@ -25,10 +26,8 @@ var (
 		service.NewWithdrawMoneyService,
 		service.NewDepositMoneyService,
 	)
-	WorkflowSet = wire.NewSet(
+	TemporalSet = wire.NewSet(
 		process.NewMoneyTransferWorkflow,
-	)
-	WorkerSet = wire.NewSet(
 		process.NewWorker,
 	)
 	WebSet = wire.NewSet(
@@ -38,23 +37,34 @@ var (
 	)
 )
 
-func InitializeTemporal() (*process.Worker, error) {
+func InitializeApplication() (*internal.Application, error) {
 	wire.Build(
 		RepositorySet,
 		ServiceSet,
-		WorkflowSet,
-		WorkerSet,
-	)
-	return &process.Worker{}, nil
-}
-
-func InitializeApi() (*rest.ServerHTTP, error) {
-	wire.Build(
-		RepositorySet,
-		ServiceSet,
-		WorkflowSet,
+		TemporalSet,
 		WebSet,
+		wire.Struct(new(internal.Application), "*"),
 	)
-
-	return &rest.ServerHTTP{}, nil
+	return &internal.Application{}, nil
 }
+
+// func InitializeTemporal() (*process.Worker, error) {
+// 	wire.Build(
+// 		RepositorySet,
+// 		ServiceSet,
+// 		WorkflowSet,
+// 		WorkerSet,
+// 	)
+// 	return &process.Worker{}, nil
+// }
+//
+// func InitializeApi() (*rest.ServerHTTP, error) {
+// 	wire.Build(
+// 		RepositorySet,
+// 		ServiceSet,
+// 		WorkflowSet,
+// 		WebSet,
+// 	)
+//
+// 	return &rest.ServerHTTP{}, nil
+// }

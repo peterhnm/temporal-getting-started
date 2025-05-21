@@ -12,11 +12,12 @@ import (
 	"temporal-getting-started/adapter/in/rest"
 	"temporal-getting-started/adapter/out/db"
 	"temporal-getting-started/application/service"
+	"temporal-getting-started/internal"
 )
 
 // Injectors from wire.go:
 
-func InitializeTemporal() (*process.Worker, error) {
+func InitializeApplication() (*internal.Application, error) {
 	userRepository := db.NewUserRepository()
 	verifyUserUseCase := service.NewVerificationService(userRepository)
 	userTaskRepository := db.NewUserTaskRepository()
@@ -26,23 +27,15 @@ func InitializeTemporal() (*process.Worker, error) {
 	depositMoneyUseCase := service.NewDepositMoneyService(bankRepository)
 	moneyTransferWorkflow := process.NewMoneyTransferWorkflow(verifyUserUseCase, notifyUserUseCase, withdrawMoneyUseCase, depositMoneyUseCase)
 	worker := process.NewWorker(moneyTransferWorkflow)
-	return worker, nil
-}
-
-func InitializeApi() (*rest.ServerHTTP, error) {
-	userTaskRepository := db.NewUserTaskRepository()
 	userTaskUseCase := service.NewUserTaskService(userTaskRepository)
 	userTaskHandler := rest.NewUserTaskHandler(userTaskUseCase)
-	userRepository := db.NewUserRepository()
-	verifyUserUseCase := service.NewVerificationService(userRepository)
-	notifyUserUseCase := service.NewNotifyUserService(userTaskRepository)
-	bankRepository := db.NewBankRepository()
-	withdrawMoneyUseCase := service.NewWithdrawMoneyService(bankRepository)
-	depositMoneyUseCase := service.NewDepositMoneyService(bankRepository)
-	moneyTransferWorkflow := process.NewMoneyTransferWorkflow(verifyUserUseCase, notifyUserUseCase, withdrawMoneyUseCase, depositMoneyUseCase)
 	processStartHandler := rest.NewProcessStartHandler(moneyTransferWorkflow)
 	serverHTTP := rest.NewServerHTTP(userTaskHandler, processStartHandler)
-	return serverHTTP, nil
+	application := &internal.Application{
+		Worker: worker,
+		Server: serverHTTP,
+	}
+	return application, nil
 }
 
 // wire.go:
@@ -50,7 +43,6 @@ func InitializeApi() (*rest.ServerHTTP, error) {
 var (
 	RepositorySet = wire.NewSet(db.NewUserRepository, db.NewBankRepository, db.NewUserTaskRepository)
 	ServiceSet    = wire.NewSet(service.NewVerificationService, service.NewNotifyUserService, service.NewUserTaskService, service.NewWithdrawMoneyService, service.NewDepositMoneyService)
-	WorkflowSet   = wire.NewSet(process.NewMoneyTransferWorkflow)
-	WorkerSet     = wire.NewSet(process.NewWorker)
+	TemporalSet   = wire.NewSet(process.NewMoneyTransferWorkflow, process.NewWorker)
 	WebSet        = wire.NewSet(rest.NewServerHTTP, rest.NewUserTaskHandler, rest.NewProcessStartHandler)
 )

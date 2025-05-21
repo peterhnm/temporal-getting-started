@@ -32,9 +32,9 @@ type RunIdDto struct {
 func (h *ProcessStartHandler) Start(c *gin.Context) {
 	paramId := c.Param("id")
 
-	var input InputDto
+	var inputDto InputDto
 
-	if err := c.BindJSON(&input); err != nil {
+	if err := c.BindJSON(&inputDto); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -56,6 +56,11 @@ func (h *ProcessStartHandler) Start(c *gin.Context) {
 	log.Println("Starting payment workflow")
 
 	// Start the workflow
+	input := shared.PaymentDetails{
+		UserId:      inputDto.UserId,
+		RecipientId: inputDto.RecipientId,
+		Amount:      float64(inputDto.Amount),
+	}
 	we, err := cl.ExecuteWorkflow(
 		context.Background(),
 		options,
@@ -70,18 +75,7 @@ func (h *ProcessStartHandler) Start(c *gin.Context) {
 
 	// Send a message back to the ui
 	runIdDto := RunIdDto{
-		RunId: we.GetID(),
+		RunId: we.GetRunID(),
 	}
 	c.JSON(http.StatusOK, runIdDto)
-
-	// Wait for the result
-	var result string
-	err = we.Get(context.Background(), &result)
-	if err != nil {
-		msg := fmt.Sprintf("Unable to get result from workflow %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": msg})
-		return
-	}
-
-	log.Printf("Workflow Result: %s", result)
 }
