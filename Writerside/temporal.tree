@@ -4,7 +4,8 @@
 
 <instance-profile id="temporal"
                  name="Temporal Getting Started"
-                 start-page="starter-topic.md">
+                 start-page="About.md">
 
-    <toc-element topic="starter-topic.md"/>
+    <toc-element topic="About.md"/>
+    <toc-element topic="Concept.md"/>
 </instance-profile>
