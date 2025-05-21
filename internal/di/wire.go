@@ -8,6 +8,8 @@ import (
 	"temporal-getting-started/adapter/in/process"
 	"temporal-getting-started/adapter/out/db"
 	"temporal-getting-started/application/service"
+
+	"temporal-getting-started/adapter/in/rest"
 )
 
 var (
@@ -26,13 +28,33 @@ var (
 	WorkflowSet = wire.NewSet(
 		process.NewMoneyTransferWorkflow,
 	)
+	WorkerSet = wire.NewSet(
+		process.NewWorker,
+	)
+	WebSet = wire.NewSet(
+		rest.NewServerHTTP,
+		rest.NewUserTaskHandler,
+		rest.NewProcessStartHandler,
+	)
 )
 
-func Initialize() *process.MoneyTransferWorkflow {
+func InitializeTemporal() (*process.Worker, error) {
 	wire.Build(
 		RepositorySet,
 		ServiceSet,
 		WorkflowSet,
+		WorkerSet,
 	)
-	return nil
+	return &process.Worker{}, nil
+}
+
+func InitializeApi() (*rest.ServerHTTP, error) {
+	wire.Build(
+		RepositorySet,
+		ServiceSet,
+		WorkflowSet,
+		WebSet,
+	)
+
+	return &rest.ServerHTTP{}, nil
 }

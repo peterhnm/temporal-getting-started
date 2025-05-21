@@ -1,0 +1,32 @@
+@workflowId = pay-invoice-701
+    
+### POST start process
+POST http://127.0.0.1:3000/api/start/{{workflowId}}
+Content-Type: application/json
+
+{
+    "userId": "1234",
+    "recipientId": "5678",
+    "amount": 10000.00
+}
+
+> {% client.global.set("runId", response.body.runId); %}
+
+### GET request to example server
+GET http://127.0.0.1:3000/api/data
+Content-Type: application/json
+
+{
+    "workflowId": {{workflowId}},
+    "runId": {{runId}}
+}
+
+### POST complete task
+POST http://127.0.0.1:3000/api/complete
+Content-Type: application/json
+
+{
+    "workflowId": {{workflowId}},
+    "runId": {{runId}},
+    "decision": false
+}

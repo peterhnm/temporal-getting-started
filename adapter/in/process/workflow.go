@@ -2,6 +2,7 @@ package process
 
 import (
 	"fmt"
+	"log"
 	"temporal-getting-started/adapter/in/shared"
 	"temporal-getting-started/domain"
 	"time"
@@ -31,12 +32,6 @@ func NewMoneyTransferWorkflow(
 		WithdrawMoneyUseCase: withdrawMoneyUseCase,
 		DepositMoneyUseCase:  depositMoneyUseCase,
 	}
-}
-
-const ApproveSignal = "ApproveMoneyTransfer"
-
-type ApproveInput struct {
-	approval bool
 }
 
 func (w *MoneyTransferWorkflow) MoneyTransfer(ctx workflow.Context, input shared.PaymentDetails) (string, error) {
@@ -73,10 +68,10 @@ func (w *MoneyTransferWorkflow) MoneyTransfer(ctx workflow.Context, input shared
 	}
 
 	// Check transfer if amount > 10.000 €
-	if input.Amount > 10000 {
-		approval := false
-		var approveInput ApproveInput
-		sig := workflow.GetSignalChannel(ctx, ApproveSignal)
+	if input.Amount >= 10000 {
+		log.Println("WARNING: amount is too big")
+		var approveInput shared.ApproveInput
+		sig := workflow.GetSignalChannel(ctx, shared.ApproveSignal)
 
 		// inform human worker about the new task
 		workflowInfo := workflow.GetInfo(ctx)
@@ -88,13 +83,13 @@ func (w *MoneyTransferWorkflow) MoneyTransfer(ctx workflow.Context, input shared
 			Amount:      input.Amount,
 		}
 		if err := workflow.
-			ExecuteActivity(ctx, w.NotifyUserUseCase, notifyUserCommand).
+			ExecuteActivity(ctx, w.NotifyUserUseCase.Add, notifyUserCommand).
 			Get(ctx, nil); err != nil {
 			return "", err
 		}
 
 		sig.Receive(ctx, &approveInput)
-		approval = approveInput.approval
+		approval := approveInput.Approval
 		if !approval {
 			return "Money transfer could not be approved!", nil
 		}
