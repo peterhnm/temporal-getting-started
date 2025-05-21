@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  INSTANCE: 'Writerside/bpmn-2-temporal'
+  INSTANCE: 'Writerside/temporal'
   DOCKER_VERSION: '2025.04.8412'
   # IS_GROUP: 'true'  # Uncomment to build a group
 
@@ -57,7 +57,6 @@ jobs:
             artifacts/report.json
             artifacts/${{ steps.define-ids.outputs.algolia_artifact }}
           retention-days: 7
-          
   test:
     needs: build
     runs-on: ubuntu-latest
