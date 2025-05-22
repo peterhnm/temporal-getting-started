@@ -8,4 +8,8 @@
 
     <toc-element topic="About.md"/>
     <toc-element topic="Concept.md"/>
+    <toc-element topic="Workflow.md"/>
+    <toc-element topic="Activity-and-Service-Tasks.md"/>
+    <toc-element topic="Signals-and-User-Tasks.md"/>
+    <toc-element topic="Starter.md"/>
 </instance-profile>
