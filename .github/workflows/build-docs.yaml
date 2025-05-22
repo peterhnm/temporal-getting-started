@@ -11,7 +11,7 @@ permissions:
   pages: write
 
 env:
-  INSTANCE: 'Writerside/temporal'
+  INSTANCE: 'docs/temporal'
   DOCKER_VERSION: '2025.04.8412'
   # IS_GROUP: 'true'  # Uncomment to build a group
 
@@ -47,7 +47,7 @@ jobs:
           echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
           echo "algolia_artifact=$ALGOLIA_ARTIFACT" >> $GITHUB_OUTPUT
 
-      - name: Build docs using Writerside Docker builder
+      - name: Build docs using docs Docker builder
         uses: JetBrains/writerside-github-action@v4
         with:
           instance: ${{ env.INSTANCE }}

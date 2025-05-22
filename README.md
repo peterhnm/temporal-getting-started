@@ -10,7 +10,7 @@
 <br />
 <div align="center">
     <a href="https://www.temporal.io">
-        <img src="Writerside/images/temporal-logo.png" alt="Image" height="180">
+        <img src="docs/images/temporal-logo.png" alt="Image" height="180">
     </a>
     <p>
         <a href="https://github.com/peterhnm/temporal-getting-started/issues">Report Bug</a>
