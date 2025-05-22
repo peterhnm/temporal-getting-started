@@ -74,9 +74,11 @@ more control, debuggability, and maintainability for developer-centric teams.
 
 ## Implementation
 
-For our specific example, this means the following:
+For our specific example, a workflow can look like the code below.
 
-The process you already saw on the starting page can look like this code in `go`.
+> For a full example, please check out the repository on [GitHub](https://github.com/peterhnm/temporal-getting-started).
+> 
+{style="note" id="generic-github-link"}
 
 ![bpmn process](process.svg){ width="200" thumbnail="true" }
 
@@ -195,8 +197,6 @@ func (w *MoneyTransferWorkflow) MoneyTransfer(
     return result, nil
 }
 ```
-
-For a full example, please check out the repository on [GitHub](https://github.com/peterhnm/temporal-getting-started).
 
 <seealso>
     <category ref="temp">

@@ -1,109 +1,133 @@
 # Signals and User Tasks
 
-> If you need more information about how to fill in this template, read the accompanying [guide](https://gitlab.com/tgdp/templates/-/blob/v1.2.0/concept/guide_concept.md).
->
-> This template includes writing instructions and boilerplate text that you can customize, use as-is, or completely replace with your own text. This text is indicated in {(curly brackets)}. Make sure you replace the placeholders with your own text.
+While BPMN explicitly defines User Tasks as points where human interaction is required, 
+Temporal handles such asynchronous external inputs through the use of Signals. 
+This section explores what signals are, how they are used in workflows, and how they 
+enable dynamic interaction with long-running processes.
 
-A summary paragraph introducing a concept, explaining its importance or
-relevance, and providing an overview of the content that will be covered
-in the document (scope).
+A **Signal** in Temporal is a mechanism for sending asynchronous, external input to a 
+running workflow execution. 
+Signals are used to communicate information or trigger logic inside a workflow after it 
+has already started — such as updating internal state, making a decision, or resuming 
+from a wait condition. 
+They are a key building block for implementing workflows that react to human actions or 
+events from external systems.
 
-Typical wording to use is:
+Signals ...
+- represents an asynchronous, external input to a workflow execution.
+- are connected to workflows through signal handlers, which can update workflow state or 
+influence control flow.
+- are similar to BPMN **User Tasks**, which pause the process until a user completes a 
+task or provides input.
+- solve the challenge of integrating human input or third-party system events into a 
+running, durable workflow — without sacrificing consistency or fault tolerance.
 
-* This article explains the basics of {(concept)} and how it works in {(the tool or context)}.
+By implementing signals, developers can build workflows that pause and wait for input 
+without busy-waiting or polling, and then react immediately once the input arrives.
+This pattern enables building human-in-the-loop systems, approval flows, and reactive 
+business processes with minimal complexity.
 
-{(Then include a paragraph with a definition of the concept you are explaining.
-If more definitions are needed, include those definitions here as a bulleted list.)}
+By using signals, developers gain a clean, event-driven way to interact with workflows 
+after they've started. 
+Temporal ensures that signal delivery is reliable and that signals are persisted in the 
+workflow's event history, so the workflow can always resume correctly — even after 
+failures or restarts.
 
-{(This section usually doesn't have a separate heading that explicitly says
-Definition; it can precede all the rest.)}
+<include from="Workflow.md" element-id="generic-github-link" />
 
-Typical wordings to use are:
+1. Create a signal channel inside your workflow
+   ```go
+   func (w *MoneyTransferWorkflow) MoneyTransfer(
+       ctx workflow.Context,
+       input shared.PaymentDetails
+   ) (string, error) {
+       // ...
+       sig := workflow.GetSignalChannel(ctx, shared.UserSignal)
+       // ...
+   }
+   ```
+   
+2. Inform the user about a new task (e.g. Entry to a database, Email, etc.)
+   ```go
+   func (w *MoneyTransferWorkflow) MoneyTransfer(
+       ctx workflow.Context,
+       input shared.PaymentDetails
+   ) (string, error) {
+       // ...
+       sig := workflow.GetSignalChannel(ctx, shared.UserSignal)
+       // save a user task to the database
+       workflowInfo := workflow.GetInfo(ctx)
+       userTask := UserTask{
+            WorkflowId:  workflowInfo.WorkflowExecution.ID,
+            RunId:       workflowInfo.WorkflowExecution.RunID,
+            Data:        // Add data that the user needs
+       }
+       if err := workflow.
+           ExecuteActivity(ctx, w.SaveUserTask.Save, userTask).
+           Get(ctx, nil); err != nil {
+           return "", err
+       }
+       // ...
+   }
+   ```
+   
+3. Wait for the user input
+   ```go
+   func (w *MoneyTransferWorkflow) MoneyTransfer(
+       ctx workflow.Context,
+       input shared.PaymentDetails
+   ) (string, error) {
+       // ...
+       sig := workflow.GetSignalChannel(ctx, shared.UserSignal)
+       // save a user task to the database
+       workflowInfo := workflow.GetInfo(ctx)
+       userTask := UserTask{
+            WorkflowId:  workflowInfo.WorkflowExecution.ID,
+            RunId:       workflowInfo.WorkflowExecution.RunID,
+            Data:        // Add data that the user needs
+       }
+       if err := workflow.
+           ExecuteActivity(ctx, w.SaveUserTask.Save, userTask).
+           Get(ctx, nil); err != nil {
+           return "", err
+       }
+   
+       // Wait for user input
+       var userInput shared.UserInput
+       sig.Receive(ctx, &userInput)
+       // ...
+   }
+   ```
+   
+4. Implement sending a signal
+   ```go
+   func CompleteUserTask(
+       ctx context.Context,
+       taskCompletionDto TaskCompletionDto
+   ) {
+       // Send signal to workflow
+       temporalClient, err := client.Dial(client.Options{})
+       if err != nil {
+           log.Fatalln("Unable to create client", err)
+       }
+       defer temporalClient.Close()
 
-* {(X)} is;
+       if err := temporalClient.SignalWorkflow(
+               ctx,
+               taskCompleteDto.WorkflowId,
+               taskCompleteDto.RunId,
+               shared.UserSignal,
+               shared.UserInput{Approval: taskCompleteDto.Decision},
+           ); err != nil {
+   
+           log.Println("Unable to signal workflow", err)
+       }
+   }
+   ```
 
-* {(X)} represents
-
-* {(X)} is connected to
-
-* {(X)} are organized {(describe the way how)}
-
-* {(X)} is similar to
-
-* {(X)} addresses the common pain points of ...
-
-* {(X)} solves the challenge of ...
-
-* By implementing {(X)}, users can ...
-
-* By using {(X)}, {(specify users/target audience)} gain ...
-
-* To use {(X)}, you create {(Y)}
-
-{(Add visual aid to complement your explanations visually.)}
-
-{(Image goes here.)}
-
-(Optional) Image/Figure: {(Image title, which concisely explains the image or
-figure. It can be represented by annotations on the image.)}
-
-## (Optional) Background
-
-{(Use this section to provide a reader with a context, prehistory, or background information.)}
-
-Typical wordings to use are:
-
-* The reason {(X)} is designed that way is because historically, ...
-
-* The idea of {(X)} originated from the growing demand for ...
-
-* Recent advancements in {(X)} and {(Y)} have opened up new possibilities
-    for ...
-
-* With the rise of {(X)}, the need for things such as {(Y)} has become
-    paramount.
-
-* Over the past decade, {(advancements in technology)} have transformed
-    the way ...
-
-## Use cases
-
-{(Use this section to provide use cases and explain how a reader can
-benefit from a concept.)}
-
-## (Optional) Comparison of {(thing being compared)}
-
-{(Use this section to compare options or alternatives.)}
-
-Table: {(Table title which concisely explains the comparison.)}
-
-## (Optional) Related resources
-
-{(Use this section to provide links to documentation related to the concept that the user can read for more information.
-If you can name this section manually (it is not generated automatically or has a heading pre-agreed within a team),
-we recommend to use "Related concepts" or "Additional information" as more descriptive ones.)}
-
-If you would like to dive deeper or start implementing {(concept)},
-check out the following resources:
-
-How-to guides
-
-1. Item 1
-
-2. Item 2
-
-Linked concepts
-
-1. Concept 1
-
-2. Concept 2
-
-External resources
-
-1. Resource 1
-
-2. Resource 2
-
----
-
-> Explore other templates from [The Good Docs Project](https://thegooddocsproject.dev/). Use our [feedback form](https://thegooddocsproject.dev/feedback/?template=Concept%20template) to give feedback on this template.
+<seealso>
+    <category ref="temp">
+        <a href="https://docs.temporal.io/develop/go/message-passing#send-signal-from-workflow">Go SDK</a>
+        <a href="https://docs.temporal.io/develop/java/message-passing#send-signal-from-workflow">Java SDK</a>
+    </category>
+</seealso>
